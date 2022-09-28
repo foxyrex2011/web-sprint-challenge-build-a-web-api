@@ -1,5 +1,8 @@
 const express = require ('express');
-const {validateProject} = require('./projects-middleware');
+const {
+    validateProjectId,
+    validateProject,
+} = require('./projects-middleware');
 const Project = require('./projects-model');
 
 const router = express.Router();
@@ -12,32 +15,31 @@ router.get('/', (req, res, next) => {
         .catch(next)
 });
 
-router.get('/:id', (req, res) => {
+router.get('/:id', validateProjectId, (req, res) => {
+    res.json(res.user)
+});
 
-})
-
-router.post((req, res) => {
-
-})
+router.post('/', validateProject, (req, res) => {
+    Project.insert(req.body)
+    .then(() => {
+        return res.status(201).json(req.body)
+    })
+    .catch(err => {
+        console.log(err)
+        res.status(500).json({message: 'oof it just didnt work'})
+    })
+});
 
 router.put('/:id', (req, res) => {
 
-})
+});
 
 router.delete('/:id', (req, res) => {
 
-})
+});
 
 router.get('/:id/actions', (req, res) => {
 
-})
-
-router.use((err, req, res, next) => {
-    res.status(err.stack || 500).json({
-        customMessage: 'oof',
-        message: err.message,
-        stack: err.stack
-    })
 });
 
 module.exports = router;
