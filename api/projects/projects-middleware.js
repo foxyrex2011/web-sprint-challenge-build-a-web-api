@@ -23,19 +23,7 @@ function validateProject(req, res, next) {
     }
 }
 
-function validateAction(req, res, next) {
-    const {text} = req.body
-    if (!text) {
-        res.status(404).json({
-            message: 'no such action nerdddd'
-        })
-    } else {
-        next()
-    }
-}
-
 module.exports = {
     validateProjectId,
     validateProject,
-    validateAction,
 }
