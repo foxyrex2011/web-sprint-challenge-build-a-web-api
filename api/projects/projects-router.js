@@ -19,27 +19,42 @@ router.get('/:id', validateProjectId, (req, res) => {
     res.json(res.user)
 });
 
-router.post('/', validateProject, (req, res) => {
+router.post('/', validateProject, (req, res, next) => {
     Project.insert(req.body)
-    .then(() => {
-        return res.status(201).json(req.body)
+    .then((newProject) => {
+        return res.status(201).json(newProject)
     })
-    .catch(err => {
-        console.log(err)
-        res.status(500).json({message: 'oof it just didnt work'})
+    .catch(next)
+});
+
+router.put('/:id', validateProject, validateProjectId, (req, res, next) => {
+    Project.update(req.params.id, req.body)
+    .then((newProject) => {
+        return res.status(400).json(newProject)
     })
+    .catch(next)
 });
 
-router.put('/:id', (req, res) => {
-
+router.delete('/:id', validateProjectId, (req, res, next) => {
+    Project.remove(req.params.id)
+        .then(project => {
+            res.status(201).json(project)
+        })
+        .catch(next)
 });
 
-router.delete('/:id', (req, res) => {
-
+router.get('/:id/actions', validateProjectId, (req, res, next) => {
+    Project.getProjectActions(req.params.id)
+    .then(project => {
+        res.status(201).json(project)
+    })
+    .catch(next)
 });
 
-router.get('/:id/actions', (req, res) => {
-
-});
+router.use((err, req, res, next) => {
+    res.status(err.status || 500).json({
+        customMessage: 'ya... nothing worked'
+    })
+})
 
 module.exports = router;
